@@ -6,16 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
-    <h1>WELCOME TO YOUR TO DO APP</h1>
-    <label for="task">ADD YOUR TASK:
-        <input type="text" id="task">
-    </label>
-    <button id="addTask"> ADD TASK</button> 
-    <div id="divResult"></div>
-    <div id="completedResult"></div>
+    <div class="container">
+
+        <h1>TO DO APP</h1>
+        <label for="task" style="color: rgb(8, 5, 5);">ADD YOUR TASK
+            <input type="text" id="task">
+        </label>
+        <button id="addTask"> ADD</button>
+        <div id="divResult"></div>
+        <div id="completedResult"></div>
+
+    </div>
     <script src="index.js"></script>
 </body>
 

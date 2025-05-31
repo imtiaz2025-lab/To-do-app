@@ -40,18 +40,22 @@ function renderTasks() {
         li.textContent = task;
 
         const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
         deleteBtn.className = "delete-btn";
         deleteBtn.addEventListener('click', () => deleteTask(index));
 
         //create complete button
         const completeBtn = document.createElement("button");
         completeBtn.className = " complete-btn"
-        completeBtn.textContent = "TASK COMPLETE"
+        completeBtn.innerHTML = '<i class="fas fa-check"></i>'
         completeBtn.addEventListener("click", () => completeTask(task, index))
 
-        li.appendChild(deleteBtn);
-        li.appendChild(completeBtn);
+        let div = document.createElement("div");
+        div.className = " completeDeleteDiv"
+
+        div.appendChild(deleteBtn);
+        div.appendChild(completeBtn);
+        li.appendChild(div)
         ul.appendChild(li);
 
 
@@ -91,20 +95,23 @@ function renderCompletedTask() {
         li.textContent = completeTask;
 
         const completeDeleteBtn = document.createElement("button");
-        completeDeleteBtn.textContent = "Delete";
+        completeDeleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
         completeDeleteBtn.className = "delete-btn";
         completeDeleteBtn.addEventListener('click', () => completeDeleteTask(index));
 
         //create incomplete? button
 
-       let incompleteBtn =  document.createElement("button");
-       incompleteBtn.textContent = " INCOMPLETE ??"
-       incompleteBtn.className = "delete-btn"
-       incompleteBtn.addEventListener("click", () => laterWork( completeTask, index))
+        let incompleteBtn = document.createElement("button");
+        incompleteBtn.className = "complete-btn"
+        incompleteBtn.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i>';
+        incompleteBtn.addEventListener("click", () => laterWork(completeTask, index))
 
+        let completeDiv = document.createElement("div")
+        completeDiv.className = " completeDeleteDiv"
 
-        li.appendChild(completeDeleteBtn);
-        li.appendChild(incompleteBtn);
+        completeDiv.appendChild(completeDeleteBtn);
+        completeDiv.appendChild(incompleteBtn);
+        li.appendChild(completeDiv)
         ul.appendChild(li);
     });
 
@@ -119,8 +126,8 @@ function renderCompletedTask() {
 
 }
 
-function laterWork( task,index){
-    document.getElementById("task").value = task ;
+function laterWork(task, index) {
+    document.getElementById("task").value = task;
     tasks();
     completedTasks.splice(index, 1);
     renderCompletedTask();
