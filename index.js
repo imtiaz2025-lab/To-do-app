@@ -48,7 +48,7 @@ function renderTasks() {
         const completeBtn = document.createElement("button");
         completeBtn.className = " complete-btn"
         completeBtn.textContent = "TASK COMPLETE"
-        completeBtn.addEventListener("click", () => completeTask(task,index))
+        completeBtn.addEventListener("click", () => completeTask(task, index))
 
         li.appendChild(deleteBtn);
         li.appendChild(completeBtn);
@@ -66,7 +66,7 @@ function deleteTask(index) {
     renderTasks(); // Re-render the task list
 }
 
-function completeTask(task,index) {
+function completeTask(task, index) {
     completedTasks.push(task);
     taskslist.splice(index, 1); // Remove from array
     renderTasks(); // Re-render the task list
@@ -95,7 +95,16 @@ function renderCompletedTask() {
         completeDeleteBtn.className = "delete-btn";
         completeDeleteBtn.addEventListener('click', () => completeDeleteTask(index));
 
+        //create incomplete? button
+
+       let incompleteBtn =  document.createElement("button");
+       incompleteBtn.textContent = " INCOMPLETE ??"
+       incompleteBtn.className = "delete-btn"
+       incompleteBtn.addEventListener("click", () => laterWork( completeTask, index))
+
+
         li.appendChild(completeDeleteBtn);
+        li.appendChild(incompleteBtn);
         ul.appendChild(li);
     });
 
@@ -103,17 +112,25 @@ function renderCompletedTask() {
     completedResult.appendChild(completeText);
     completedResult.appendChild(completeTaskElement);
 
-    
-    if(completedTasks.length == 0){
+
+    if (completedTasks.length == 0) {
         completedResult.removeChild(completeText);
     }
 
 }
+
+function laterWork( task,index){
+    document.getElementById("task").value = task ;
+    tasks();
+    completedTasks.splice(index, 1);
+    renderCompletedTask();
+    document.getElementById("task").value = " ";
+}
+
 
 
 function completeDeleteTask(index) {
     completedTasks.splice(index, 1);
     renderCompletedTask();
 }
-
 
