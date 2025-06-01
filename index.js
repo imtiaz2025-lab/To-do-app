@@ -1,39 +1,39 @@
 const addTask = document.getElementById("addTask");
 addTask.addEventListener("click", tasks);
+
 let taskslist = [];
 let completedTasks = [];
+
 const result = document.getElementById("divResult");
 const completedResult = document.getElementById("completedResult");
 
+// Load data from local storage on start
+loadFromLocalStorage();
+
+// Add new task
 function tasks() {
     const newTaskValue = document.getElementById("task").value.trim();
 
-    // Check input validity
     if (newTaskValue === "") {
         alert("Please input a valid task");
         return;
-    };
+    }
 
-    // Add task to array
     taskslist.push(newTaskValue);
-
-    // Clear and rebuild the task list
-    renderTasks();
-
-    // Clear input field
     document.getElementById("task").value = "";
+
+    renderTasks();
+    saveToLocalStorage(); // ✅ Save after change
 }
 
+// Show pending tasks
 function renderTasks() {
-    // Clear existing tasks
     result.innerHTML = "";
 
-    // Create container for tasks
     const taskElement = document.createElement("div");
     taskElement.className = "task-container";
     const ul = document.createElement("ol");
 
-    // Create list items for each task
     taskslist.forEach((task, index) => {
         const li = document.createElement("li");
         li.className = "task-item";
@@ -42,53 +42,39 @@ function renderTasks() {
         const deleteBtn = document.createElement("button");
         deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
         deleteBtn.className = "delete-btn";
-        deleteBtn.addEventListener('click', () => deleteTask(index));
+        deleteBtn.addEventListener('click', () => {
+            deleteTask(index);
+        });
 
-        //create complete button
         const completeBtn = document.createElement("button");
-        completeBtn.className = " complete-btn"
-        completeBtn.innerHTML = '<i class="fas fa-check"></i>'
-        completeBtn.addEventListener("click", () => completeTask(task, index))
+        completeBtn.className = "complete-btn";
+        completeBtn.innerHTML = '<i class="fas fa-check"></i>';
+        completeBtn.addEventListener("click", () => {
+            completeTask(task, index);
+        });
 
-        let div = document.createElement("div");
-        div.className = " completeDeleteDiv"
-
+        const div = document.createElement("div");
+        div.className = "completeDeleteDiv";
         div.appendChild(deleteBtn);
         div.appendChild(completeBtn);
-        li.appendChild(div)
+        li.appendChild(div);
         ul.appendChild(li);
-
-
     });
 
     taskElement.appendChild(ul);
     result.appendChild(taskElement);
 }
 
-function deleteTask(index) {
-    taskslist.splice(index, 1); // Remove from array
-    renderTasks(); // Re-render the task list
-}
-
-function completeTask(task, index) {
-    completedTasks.push(task);
-    taskslist.splice(index, 1); // Remove from array
-    renderTasks(); // Re-render the task list
-    renderCompletedTask();
-}
-
-// function to render completed tasks
+// Show completed tasks
 function renderCompletedTask() {
     completedResult.innerHTML = "";
     const completeText = document.createElement("h2");
     completeText.textContent = "Completed Tasks List";
 
-    // Create container for tasks
     const completeTaskElement = document.createElement("div");
     completeTaskElement.className = "completeTask-container";
     const ul = document.createElement("ol");
 
-    // Create list items for each task
     completedTasks.forEach((completeTask, index) => {
         const li = document.createElement("li");
         li.className = "completeTask-item";
@@ -97,47 +83,86 @@ function renderCompletedTask() {
         const completeDeleteBtn = document.createElement("button");
         completeDeleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
         completeDeleteBtn.className = "delete-btn";
-        completeDeleteBtn.addEventListener('click', () => completeDeleteTask(index));
+        completeDeleteBtn.addEventListener('click', () => {
+            completeDeleteTask(index);
+        });
 
-        //create incomplete? button
-
-        let incompleteBtn = document.createElement("button");
-        incompleteBtn.className = "complete-btn"
+        const incompleteBtn = document.createElement("button");
+        incompleteBtn.className = "complete-btn";
         incompleteBtn.innerHTML = '<i class="fa fa-repeat" aria-hidden="true"></i>';
-        incompleteBtn.addEventListener("click", () => laterWork(completeTask, index))
+        incompleteBtn.addEventListener("click", () => {
+            laterWork(completeTask, index);
+        });
 
-        let completeDiv = document.createElement("div")
-        completeDiv.className = " completeDeleteDiv"
-
+        const completeDiv = document.createElement("div");
+        completeDiv.className = "completeDeleteDiv";
         completeDiv.appendChild(completeDeleteBtn);
         completeDiv.appendChild(incompleteBtn);
-        li.appendChild(completeDiv)
+
+        li.appendChild(completeDiv);
         ul.appendChild(li);
     });
 
     completeTaskElement.appendChild(ul);
-    completedResult.appendChild(completeText);
-    completedResult.appendChild(completeTaskElement);
 
-
-    if (completedTasks.length == 0) {
-        completedResult.removeChild(completeText);
+    if (completedTasks.length > 0) {
+        completedResult.appendChild(completeText);
+        completedResult.appendChild(completeTaskElement);
     }
-
 }
 
+// Delete pending task
+function deleteTask(index) {
+    taskslist.splice(index, 1);
+    renderTasks();
+    saveToLocalStorage(); // ✅
+}
+
+// Mark task as complete
+function completeTask(task, index) {
+    completedTasks.push(task);
+    taskslist.splice(index, 1);
+    renderTasks();
+    renderCompletedTask();
+    saveToLocalStorage(); // ✅
+}
+
+// Move completed task back to pending
 function laterWork(task, index) {
     document.getElementById("task").value = task;
-    tasks();
+    taskslist.push(task); // direct push instead of calling tasks()
     completedTasks.splice(index, 1);
+    document.getElementById("task").value = "";
+    renderTasks();
     renderCompletedTask();
-    document.getElementById("task").value = " ";
+    saveToLocalStorage(); // ✅
 }
 
-
-
+// Delete from completed
 function completeDeleteTask(index) {
     completedTasks.splice(index, 1);
     renderCompletedTask();
+    saveToLocalStorage(); // ✅
 }
 
+// ✅ Save to local storage
+function saveToLocalStorage() {
+    localStorage.setItem("taskslist", JSON.stringify(taskslist));
+    localStorage.setItem("completedTasks", JSON.stringify(completedTasks));
+}
+
+// ✅ Load from local storage
+function loadFromLocalStorage() {
+    const storedTasks = localStorage.getItem("taskslist");
+    const storedCompleted = localStorage.getItem("completedTasks");
+
+    if (storedTasks) {
+        taskslist = JSON.parse(storedTasks);
+    }
+    if (storedCompleted) {
+        completedTasks = JSON.parse(storedCompleted);
+    }
+
+    renderTasks();
+    renderCompletedTask();
+}
